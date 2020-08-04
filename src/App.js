@@ -1,25 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect } from 'react';
+import { atom, useRecoilState } from 'recoil';
 import './App.css';
 
+const repoState = atom({
+  key: 'repos',
+  default: []
+});
+
 function App() {
+  const [repos, setRepos] = useRecoilState(repoState);
+
+  useEffect(() => {
+    const fetchRepos = async () => {
+      const url = `https://ghapi.huchen.dev/repositories?since=monthly`;
+      const res = await fetch(url);
+      const data = await res.json();
+      setRepos(data);
+    };
+
+    fetchRepos();
+  }, [setRepos]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {repos.map((repo) => {
+        return (
+          <div key={repo.url}>
+            <a href={repo.url} target='_blank'>
+              {repo.name}
+            </a>
+            <div>{repo.description}</div>
+            <div>
+              {repo.stars} / {repo.forks} forks
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
 }
 
