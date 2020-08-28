@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { atom, useRecoilState } from 'recoil';
-import './App.css';
 
 const repoState = atom({
   key: 'repos',
